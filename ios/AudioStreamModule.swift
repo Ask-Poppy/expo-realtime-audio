@@ -17,6 +17,7 @@ public class AudioStreamModule: Module {
     private var emissionIntervalSeconds: TimeInterval = 0.05
     private var targetSampleRate: Double = 16000
     private var targetChannels: Int = 1
+    private var bufferSize: AVAudioFrameCount = 1024
     private var resamplerConverter: AVAudioConverter?
     private var resamplerInputFormat: AVAudioFormat?
     private var resamplerOutputFormat: AVAudioFormat?
@@ -83,9 +84,20 @@ public class AudioStreamModule: Module {
             self.targetChannels = config["channels"] as? Int ?? 1
             let intervalMs = config["intervalMs"] as? Int ?? 50
             self.emissionIntervalSeconds = Double(intervalMs) / 1000.0
+            self.bufferSize = AVAudioFrameCount(config["bufferSize"] as? Int ?? 1024)
+
+            // Parse audio session config
+            let audioSessionConfig = config["audioSession"] as? [String: Any] ?? [:]
+            let allowBluetooth = audioSessionConfig["allowBluetooth"] as? Bool ?? true
+            let mixWithOthers = audioSessionConfig["mixWithOthers"] as? Bool ?? true
+            let defaultToSpeaker = audioSessionConfig["defaultToSpeaker"] as? Bool ?? true
 
             do {
-                try self.configureSessionForRecording()
+                try self.configureSessionForRecording(
+                    allowBluetooth: allowBluetooth,
+                    mixWithOthers: mixWithOthers,
+                    defaultToSpeaker: defaultToSpeaker
+                )
 
                 if self.audioEngine == nil {
                     self.audioEngine = AVAudioEngine()
@@ -108,7 +120,7 @@ public class AudioStreamModule: Module {
 
                 self.setupResampler(from: hardwareFormat)
 
-                inputNode.installTap(onBus: 0, bufferSize: 1024, format: hardwareFormat) { [weak self] buffer, _ in
+                inputNode.installTap(onBus: 0, bufferSize: self.bufferSize, format: hardwareFormat) { [weak self] buffer, _ in
                     self?.processBuffer(buffer)
                 }
 
@@ -183,11 +195,26 @@ public class AudioStreamModule: Module {
         }
     }
 
-    private func configureSessionForRecording() throws {
+    private func configureSessionForRecording(
+        allowBluetooth: Bool = true,
+        mixWithOthers: Bool = true,
+        defaultToSpeaker: Bool = true
+    ) throws {
         guard !isSessionConfiguredForRecording else { return }
 
+        var options: AVAudioSession.CategoryOptions = []
+        if allowBluetooth {
+            options.insert(.allowBluetooth)
+        }
+        if mixWithOthers {
+            options.insert(.mixWithOthers)
+        }
+        if defaultToSpeaker {
+            options.insert(.defaultToSpeaker)
+        }
+
         let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetooth, .mixWithOthers, .defaultToSpeaker])
+        try session.setCategory(.playAndRecord, mode: .voiceChat, options: options)
         try session.setActive(true)
         isSessionConfiguredForRecording = true
     }

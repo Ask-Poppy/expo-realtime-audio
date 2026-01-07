@@ -133,6 +133,12 @@ const result = await startRecording(
     sampleRate: 16000,  // Target sample rate (default: 16000)
     channels: 1,        // Mono or stereo (default: 1)
     intervalMs: 50,     // Chunk emission interval (default: 50)
+    bufferSize: 1024,   // Buffer size: 256 | 512 | 1024 | 2048 (default: 1024)
+    audioSession: {     // iOS audio session options
+      allowBluetooth: true,   // Route through Bluetooth (default: true)
+      mixWithOthers: true,    // Mix with other apps (default: true)
+      defaultToSpeaker: true, // Use speaker not earpiece (default: true)
+    },
   },
   (chunk) => {
     // Called every ~intervalMs with audio data
@@ -345,14 +351,14 @@ function decodeBase64ToPCM16(base64: string): Int16Array {
 - Uses `AVAudioEngine` for low-latency audio I/O
 - Audio session configured as `.playAndRecord` with `.voiceChat` mode
 - Automatic sample rate conversion via `AVAudioConverter`
-- Bluetooth and speaker routing enabled by default
+- Configurable Bluetooth, speaker routing, and audio mixing options
 - Recording runs on a dedicated high-priority queue
 
 ### Performance
 
 - Default 50ms chunk interval balances latency vs. overhead
 - Native resampling is more efficient than JavaScript alternatives
-- Buffer sizes optimized for voice (1024 frames)
+- Configurable buffer sizes (256, 512, 1024, 2048 frames) - smaller = lower latency, larger = more stable
 
 ## Requirements
 

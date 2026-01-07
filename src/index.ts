@@ -3,6 +3,7 @@ import AudioStreamModule from "./AudioStreamModule";
 import type {
   AudioChunkEvent,
   AudioErrorEvent,
+  AudioSessionConfig,
   PermissionResult,
   PlaybackConfig,
   RecordingConfig,
@@ -12,6 +13,7 @@ import type {
 export type {
   AudioChunkEvent,
   AudioErrorEvent,
+  AudioSessionConfig,
   RecordingConfig,
   PlaybackConfig,
   RecordingResult,
@@ -93,6 +95,12 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
         sampleRate: config.sampleRate ?? 16000,
         channels: config.channels ?? 1,
         intervalMs: config.intervalMs ?? 50,
+        bufferSize: config.bufferSize ?? 1024,
+        audioSession: {
+          allowBluetooth: config.audioSession?.allowBluetooth ?? true,
+          mixWithOthers: config.audioSession?.mixWithOthers ?? true,
+          defaultToSpeaker: config.audioSession?.defaultToSpeaker ?? true,
+        },
       });
 
       setIsRecording(true);

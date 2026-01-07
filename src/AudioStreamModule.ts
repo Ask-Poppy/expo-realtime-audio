@@ -18,6 +18,12 @@ declare class AudioStreamModuleType extends NativeModule<AudioStreamEvents> {
     sampleRate: number;
     channels: number;
     intervalMs: number;
+    bufferSize: number;
+    audioSession: {
+      allowBluetooth: boolean;
+      mixWithOthers: boolean;
+      defaultToSpeaker: boolean;
+    };
   }): Promise<RecordingResult>;
   stopRecording(): Promise<void>;
   requestPermissions(): Promise<PermissionResult>;
