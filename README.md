@@ -1,4 +1,4 @@
-![Expo Realtime Audio](./header.jpg)
+![Expo Realtime Audio](./github.jpg)
 
 # expo-realtime-audio
 

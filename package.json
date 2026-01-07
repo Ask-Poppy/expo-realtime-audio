@@ -36,7 +36,7 @@
     "src",
     "ios",
     "expo-module.config.json",
-    "header.jpg"
+    "github.jpg"
   ],
   "scripts": {
     "build": "tsc",
