@@ -1,0 +1,30 @@
+import { NativeModule, requireNativeModule } from "expo";
+import type {
+  AudioChunkEvent,
+  AudioErrorEvent,
+  RecordingResult,
+  PermissionResult,
+} from "./types";
+
+type AudioStreamEvents = {
+  onAudioChunk: (event: AudioChunkEvent) => void;
+  onError: (event: AudioErrorEvent) => void;
+  onPlaybackComplete: () => void;
+};
+
+declare class AudioStreamModuleType extends NativeModule<AudioStreamEvents> {
+  prepare(): Promise<void>;
+  startRecording(config: {
+    sampleRate: number;
+    channels: number;
+    intervalMs: number;
+  }): Promise<RecordingResult>;
+  stopRecording(): Promise<void>;
+  requestPermissions(): Promise<PermissionResult>;
+  startPlayback(config: { sampleRate?: number; channels?: number }): Promise<void>;
+  playChunk(base64Data: string): Promise<void>;
+  endPlayback(): Promise<void>;
+  stopPlayback(): Promise<void>;
+}
+
+export default requireNativeModule<AudioStreamModuleType>("AudioStream");
