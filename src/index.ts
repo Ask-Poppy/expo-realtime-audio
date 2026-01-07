@@ -3,10 +3,10 @@ import AudioStreamModule from "./AudioStreamModule";
 import type {
   AudioChunkEvent,
   AudioErrorEvent,
-  RecordingConfig,
-  PlaybackConfig,
-  RecordingResult,
   PermissionResult,
+  PlaybackConfig,
+  RecordingConfig,
+  RecordingResult,
 } from "./types";
 
 export type {
@@ -39,7 +39,7 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
   const playbackSubscriptionRef = useRef<EventSubscription | null>(null);
   const callbackRef = useRef<((event: AudioChunkEvent) => void) | null>(null);
   const errorCallbackRef = useRef<((error: AudioErrorEvent) => void) | null>(
-    options.onError ?? null
+    options.onError ?? null,
   );
   const playbackCompleteRef = useRef<(() => void) | null>(null);
   const preparedRef = useRef(false);
@@ -55,7 +55,7 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
       ERROR_EVENT,
       (event: AudioErrorEvent) => {
         errorCallbackRef.current?.(event);
-      }
+      },
     );
 
     return () => {
@@ -64,7 +64,9 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
   }, []);
 
   const prepare = useCallback(async () => {
-    if (preparedRef.current) return;
+    if (preparedRef.current) {
+      return;
+    }
     try {
       await AudioStreamModule.prepare();
       preparedRef.current = true;
@@ -76,7 +78,7 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
   const startRecording = useCallback(
     async (
       config: RecordingConfig = {},
-      onAudioChunk: (event: AudioChunkEvent) => void
+      onAudioChunk: (event: AudioChunkEvent) => void,
     ): Promise<RecordingResult> => {
       callbackRef.current = onAudioChunk;
 
@@ -84,7 +86,7 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
         AUDIO_CHUNK_EVENT,
         (event: AudioChunkEvent) => {
           callbackRef.current?.(event);
-        }
+        },
       );
 
       const result = await AudioStreamModule.startRecording({
@@ -96,7 +98,7 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
       setIsRecording(true);
       return result;
     },
-    []
+    [],
   );
 
   const stopRecording = useCallback(async () => {
@@ -107,13 +109,14 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
     setIsRecording(false);
   }, []);
 
-  const requestPermissions = useCallback(async (): Promise<PermissionResult> => {
-    const result = await AudioStreamModule.requestPermissions();
-    if (result.granted) {
-      prepare();
-    }
-    return result;
-  }, [prepare]);
+  const requestPermissions =
+    useCallback(async (): Promise<PermissionResult> => {
+      const result = await AudioStreamModule.requestPermissions();
+      if (result.granted) {
+        prepare();
+      }
+      return result;
+    }, [prepare]);
 
   const startPlayback = useCallback(
     async (config: PlaybackConfig = {}, onPlaybackComplete?: () => void) => {
@@ -126,7 +129,7 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
           playbackCompleteRef.current?.();
           playbackSubscriptionRef.current?.remove();
           playbackSubscriptionRef.current = null;
-        }
+        },
       );
 
       await AudioStreamModule.startPlayback({
@@ -136,7 +139,7 @@ export function useAudioStream(options: UseAudioStreamOptions = {}) {
 
       setIsPlaying(true);
     },
-    []
+    [],
   );
 
   const playChunk = useCallback(async (base64Data: string) => {

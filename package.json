@@ -39,10 +39,17 @@
   ],
   "scripts": {
     "build": "tsc",
+    "build:swift": "swiftc -parse ios/*.swift",
     "clean": "rm -rf build",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm run clean && npm run build",
-    "typecheck": "tsc --noEmit"
+    "prepare": "bun run build",
+    "prepublishOnly": "bun run clean && bun run build",
+    "format": "biome check --write . && swiftformat ios",
+    "format:swift": "swiftformat ios",
+    "lint": "biome lint .",
+    "lint:swift": "swiftlint lint ios --strict",
+    "check": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "ci": "biome check . && swiftformat --lint ios && bun run lint:swift && bun run build:swift && bun run typecheck"
   },
   "peerDependencies": {
     "expo": ">=54.0.0",
@@ -50,6 +57,7 @@
     "react-native": ">=0.76.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.3.5",
     "@types/react": "~18.3.0",
     "expo": "~54.0.0",
     "typescript": "~5.6.0"

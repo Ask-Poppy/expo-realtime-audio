@@ -1,6 +1,6 @@
-import ExpoModulesCore
-import AVFoundation
 import AudioToolbox
+import AVFoundation
+import ExpoModulesCore
 
 private let AUDIO_CHUNK_EVENT = "onAudioChunk"
 private let ERROR_EVENT = "onError"
@@ -125,7 +125,7 @@ public class AudioStreamModule: Module {
                     "sampleRate": Int(self.targetSampleRate),
                     "channels": self.targetChannels,
                     "bitDepth": 16,
-                    "mimeType": "audio/pcm"
+                    "mimeType": "audio/pcm",
                 ])
             } catch {
                 promise.reject("START_ERROR", "Failed to start recording: \(error.localizedDescription)")
@@ -200,8 +200,8 @@ public class AudioStreamModule: Module {
             interleaved: false
         ) else { return }
 
-        if resamplerInputFormat?.sampleRate == inputFormat.sampleRate &&
-           resamplerInputFormat?.channelCount == inputFormat.channelCount &&
+        if resamplerInputFormat?.sampleRate == inputFormat.sampleRate,
+           resamplerInputFormat?.channelCount == inputFormat.channelCount,
            resamplerConverter != nil {
             return
         }
@@ -252,7 +252,7 @@ public class AudioStreamModule: Module {
             throw NSError(domain: "AudioStream", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid base64 data"])
         }
 
-        guard let playbackFormat = playbackFormat else {
+        guard let playbackFormat else {
             throw NSError(domain: "AudioStream", code: 4, userInfo: [NSLocalizedDescriptionKey: "Playback not started"])
         }
 
@@ -291,7 +291,7 @@ public class AudioStreamModule: Module {
     }
 
     private func checkPlaybackComplete() {
-        if playbackEnded && buffersCompleted >= buffersScheduled && buffersScheduled > 0 {
+        if playbackEnded, buffersCompleted >= buffersScheduled, buffersScheduled > 0 {
             DispatchQueue.main.async {
                 self.sendEvent(PLAYBACK_COMPLETE_EVENT, [:])
             }
@@ -324,7 +324,7 @@ public class AudioStreamModule: Module {
         guard isRecording else { return }
 
         if resamplerInputFormat?.sampleRate != buffer.format.sampleRate ||
-           resamplerInputFormat?.channelCount != buffer.format.channelCount {
+            resamplerInputFormat?.channelCount != buffer.format.channelCount {
             setupResampler(from: buffer.format)
         }
 
@@ -344,16 +344,16 @@ public class AudioStreamModule: Module {
         }
 
         processingQueue.async { [weak self] in
-            guard let self = self, self.isRecording else { return }
+            guard let self, isRecording else { return }
 
-            let data = self.convertToPCM16(bufferCopy)
-            self.accumulatedData.append(data)
+            let data = convertToPCM16(bufferCopy)
+            accumulatedData.append(data)
 
             let now = Date()
-            if let lastTime = self.lastEmissionTime,
+            if let lastTime = lastEmissionTime,
                now.timeIntervalSince(lastTime) >= self.emissionIntervalSeconds {
-                self.emitAudioChunk()
-                self.lastEmissionTime = now
+                emitAudioChunk()
+                lastEmissionTime = now
             }
         }
     }
@@ -371,14 +371,15 @@ public class AudioStreamModule: Module {
             "data": dataToEmit.base64EncodedString(),
             "position": Int(position),
             "chunkSize": dataToEmit.count,
-            "totalSize": totalSize
+            "totalSize": totalSize,
         ])
     }
 
     private func resampleBuffer(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
         guard let converter = resamplerConverter,
               let outputFormat = resamplerOutputFormat,
-              let outputBuffer = resamplerOutputBuffer else {
+              let outputBuffer = resamplerOutputBuffer
+        else {
             return nil
         }
 
@@ -451,7 +452,7 @@ public class AudioStreamModule: Module {
     private func emitError(code: String, message: String) {
         sendEvent(ERROR_EVENT, [
             "code": code,
-            "message": message
+            "message": message,
         ])
     }
 }
