@@ -1,7 +1,5 @@
 ![Expo Realtime Audio](./header.jpg)
 
-# expo-realtime-audio
-
 Real-time bidirectional audio streaming for Expo and React Native. Record microphone input and play audio chunks with ultra-low latency using native `AVAudioEngine`.
 
 Built for voice AI applications, live audio processing, and real-time communication.
