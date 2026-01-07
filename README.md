@@ -24,15 +24,13 @@ Built for voice AI applications, live audio processing, and real-time communicat
 ## Installation
 
 ```bash
-npx expo install expo-realtime-audio
+bunx expo install expo-realtime-audio
 ```
 
-Or with npm/yarn:
+Or manually:
 
 ```bash
-npm install expo-realtime-audio
-# or
-yarn add expo-realtime-audio
+bun add expo-realtime-audio
 ```
 
 ### iOS Setup
@@ -54,8 +52,8 @@ Add microphone permission to your `app.json`:
 Then rebuild your app:
 
 ```bash
-npx expo prebuild
-npx expo run:ios
+bunx expo prebuild
+bunx expo run:ios
 ```
 
 ## Quick Start
