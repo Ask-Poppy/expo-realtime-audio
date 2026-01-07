@@ -2,7 +2,7 @@
 
 # expo-realtime-audio
 
-Real-time bidirectional audio streaming for Expo and React Native. Record microphone input and play audio chunks with ultra-low latency using native `AVAudioEngine`.
+Real-time bidirectional audio streaming for Expo and React Native. Record microphone input and play audio chunks with ultra-low latency using native audio engines (`AVAudioEngine` on iOS, `AudioRecord`/`AudioTrack` on Android).
 
 Built for voice AI applications, live audio processing, and real-time communication.
 
@@ -10,18 +10,19 @@ Built for voice AI applications, live audio processing, and real-time communicat
 
 - **Real-time streaming** - Get audio chunks as they're recorded, not after
 - **Bidirectional** - Record and play simultaneously with proper audio session handling
-- **Low latency** - Native `AVAudioEngine` with configurable buffer intervals (default 50ms)
-- **Automatic resampling** - Hardware sample rate → target sample rate conversion handled natively
+- **Low latency** - Native audio engines with configurable buffer intervals (default 50ms)
+- **Automatic resampling** - Hardware sample rate → target sample rate conversion handled natively (iOS)
 - **Simple React hook** - `useAudioStream()` manages all the complexity
 - **TypeScript first** - Full type definitions included
 - **Expo SDK 54+** - Built with the modern Expo Modules API
+- **Cross-platform** - iOS and Android support with consistent API
 
 ## Platform Support
 
 | Platform | Status |
 |----------|--------|
 | iOS      | Supported |
-| Android  | Coming soon |
+| Android  | Supported |
 
 ## Installation
 
@@ -58,6 +59,27 @@ Then rebuild your app:
 ```bash
 npx expo prebuild
 npx expo run:ios
+```
+
+### Android Setup
+
+Add microphone permission to your `app.json`:
+
+```json
+{
+  "expo": {
+    "android": {
+      "permissions": ["android.permission.RECORD_AUDIO"]
+    }
+  }
+}
+```
+
+Then rebuild your app:
+
+```bash
+npx expo prebuild
+npx expo run:android
 ```
 
 ## Quick Start
@@ -354,17 +376,27 @@ function decodeBase64ToPCM16(base64: string): Int16Array {
 - Configurable Bluetooth, speaker routing, and audio mixing options
 - Recording runs on a dedicated high-priority queue
 
+### Android Implementation
+
+- Uses `AudioRecord` for low-latency PCM audio capture
+- Uses `AudioTrack` in streaming mode for PCM playback
+- Audio source configured as `VOICE_COMMUNICATION` for optimal voice processing
+- High-priority audio threads for minimal latency
+- `MODE_IN_COMMUNICATION` audio manager mode for proper routing
+
 ### Performance
 
 - Default 50ms chunk interval balances latency vs. overhead
-- Native resampling is more efficient than JavaScript alternatives
+- Native resampling is more efficient than JavaScript alternatives (iOS only)
 - Configurable buffer sizes (256, 512, 1024, 2048 frames) - smaller = lower latency, larger = more stable
+- Android uses minimum buffer size × 2 for stability
 
 ## Requirements
 
 - Expo SDK 54 or later
 - React Native 0.76 or later
 - iOS 13.4 or later
+- Android API 24 (Android 7.0) or later
 
 ## Contributing
 

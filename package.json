@@ -28,13 +28,17 @@
     "voice",
     "speech",
     "ios",
+    "android",
     "avfoundation",
-    "avaudioengine"
+    "avaudioengine",
+    "audiorecord",
+    "audiotrack"
   ],
   "files": [
     "build",
     "src",
     "ios",
+    "android",
     "expo-module.config.json",
     "github.jpg"
   ],
@@ -44,13 +48,15 @@
     "clean": "rm -rf build",
     "prepare": "bun run build",
     "prepublishOnly": "bun run clean && bun run build",
-    "format": "biome check --write . && swiftformat ios",
+    "format": "biome check --write . && swiftformat ios && ktlint --format android/src/**/*.kt",
     "format:swift": "swiftformat ios",
+    "format:kotlin": "ktlint --format android/src/**/*.kt",
     "lint": "biome lint .",
     "lint:swift": "swiftlint lint ios --strict",
+    "lint:kotlin": "ktlint android/src/**/*.kt",
     "check": "biome check --write .",
     "typecheck": "tsc --noEmit",
-    "ci": "biome check . && swiftformat --lint ios && bun run lint:swift && bun run build:swift && bun run typecheck"
+    "ci": "biome check . && swiftformat --lint ios && bun run lint:swift && bun run build:swift && bun run lint:kotlin && bun run typecheck"
   },
   "peerDependencies": {
     "expo": ">=54.0.0",
