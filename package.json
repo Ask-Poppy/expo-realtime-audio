@@ -10,12 +10,12 @@
   "author": "Poppy <hello@askpoppy.ai>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AskPoppy/expo-realtime-audio.git"
+    "url": "git+https://github.com/Ask-Poppy/expo-realtime-audio.git"
   },
   "bugs": {
-    "url": "https://github.com/AskPoppy/expo-realtime-audio/issues"
+    "url": "https://github.com/Ask-Poppy/expo-realtime-audio/issues"
   },
-  "homepage": "https://github.com/AskPoppy/expo-realtime-audio#readme",
+  "homepage": "https://github.com/Ask-Poppy/expo-realtime-audio#readme",
   "keywords": [
     "expo",
     "react-native",
