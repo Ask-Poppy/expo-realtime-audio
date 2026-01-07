@@ -35,7 +35,8 @@
     "build",
     "src",
     "ios",
-    "expo-module.config.json"
+    "expo-module.config.json",
+    "header.jpg"
   ],
   "scripts": {
     "build": "tsc",

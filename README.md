@@ -1,4 +1,4 @@
-<!-- HEADER_PLACEHOLDER: Add your header graphic here -->
+![Expo Realtime Audio](./header.jpg)
 
 # expo-realtime-audio
 
