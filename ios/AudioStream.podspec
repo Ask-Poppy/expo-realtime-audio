@@ -9,12 +9,12 @@ Pod::Spec.new do |s|
   s.description    = package['description'] || 'Audio streaming module for Expo'
   s.license        = package['license'] || 'MIT'
   s.author         = package['author'] || 'Poppy'
-  s.homepage       = package['homepage'] || 'https://github.com/poppy'
+  s.homepage       = package['homepage'] || 'https://github.com/Ask-Poppy/expo-realtime-audio'
   s.platforms      = {
     :ios => '15.1'
   }
   s.swift_version  = '5.9'
-  s.source         = { git: 'https://github.com/poppy/audio-stream' }
+  s.source         = { git: 'https://github.com/Ask-Poppy/expo-realtime-audio.git' }
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
